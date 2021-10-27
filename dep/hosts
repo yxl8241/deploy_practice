@@ -1,0 +1,9 @@
+[master]
+slurm18
+
+[worker]
+vmnode3
+vmnode4
+
+[mariadb]
+slurm18

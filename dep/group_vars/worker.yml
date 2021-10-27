@@ -1,0 +1,10 @@
+---
+# ntp/chrony
+chrony_config_server:
+  - 10.0.0.98 
+
+# Slurm task 
+slurm_roles: ['exec']
+
+# Lmod
+lmod_install: no

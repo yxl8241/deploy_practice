@@ -1,0 +1,6 @@
+---
+add_user: 'repo'
+eb_install_dir: ''
+
+profile_enabled: false
+py_version: "{{ ansible_python_version | regex_replace('\\.\\d+$', '') }}"

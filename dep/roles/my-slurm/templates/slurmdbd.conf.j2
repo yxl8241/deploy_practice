@@ -1,0 +1,17 @@
+# Authentication info
+AuthType=auth/munge
+
+# slurmDBD info
+DbdAddr=localhost
+DbdHost=localhost
+DebugLevel=4
+LogFile={{ slurm_log_dir }}/slurmdbd.log
+PidFile={{ slurm_pid_dir }}/slurmdbd.pid
+SlurmUser=slurm
+
+# Database info
+StorageType=accounting_storage/mysql
+StorageHost=localhost
+StoragePass={{ slumdb_password }}
+StorageUser={{ slumdb_user }}
+StorageLoc={{ slumdbd_database }}

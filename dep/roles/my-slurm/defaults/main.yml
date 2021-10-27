@@ -1,0 +1,27 @@
+---
+# Variables for tasks
+slurm_roles: []
+
+slurm_nodes: []
+slurm_partitions: []
+slurm_major_version: "{{ '17' if ansible_distribution_major_version|int < 20 else '19' }}"
+
+# Variables to configure templates
+slurm_cluster_name: "cluster"
+controller_host: "headnode"
+backup_host: ""
+
+slumdbd_database: "slurm_acct_db"
+slumdb_user: "slurm"
+slumdb_password: "slurm123"
+
+slurm_log_dir: "/var/log/slurm-llnl"
+slurm_spool_dir: "/var/lib/slurm-llnl/slurmd"
+state_save_loc: "/var/lib/slurm-llnl/slurmctld"
+slurm_pid_dir: "{{ '/run/slurm-llnl' if ansible_distribution_release != 'focal' else '/run' }}"
+
+make_dirs: 
+  - "{{ slurm_log_dir }}"
+  - "{{ slurm_spool_dir }}"
+  - "{{ state_save_loc }}"
+  - "{{ slurm_pid_dir if ansible_distribution_release != 'focal' else '' }}"

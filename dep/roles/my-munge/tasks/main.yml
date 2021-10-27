@@ -1,0 +1,38 @@
+---
+- name: Install munge packages
+  apt:
+    name: munge
+    state: present
+    update_cache: yes
+
+- name: Generate a Munge key
+  command: "create-munge-key -f"
+  changed_when: true
+  notify: restart munge
+  when: inventory_hostname == controller_host
+
+- meta: flush_handlers
+
+- name: Retrieve Munge key
+  slurp:
+    src: "/etc/munge/munge.key"
+  register: munge_key
+  delegate_to: "{{ controller_host }}"
+
+- name: Copy munge key
+  copy:
+    content: "{{ munge_key.content }}"
+    dest: /etc/munge/munge.key
+    owner: munge
+    group: munge
+    mode: 0600
+  when: munge_key is defined
+  notify: restart munge
+
+- name: Enable munge service
+  service:
+    name: munge
+    enabled: yes
+    state: started
+
+- meta: flush_handlers

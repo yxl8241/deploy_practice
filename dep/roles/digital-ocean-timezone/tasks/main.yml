@@ -1,0 +1,16 @@
+---
+- name: Set timezone
+  copy:
+    content: '{{ current_timezone | default("UTC") }}'
+    dest: /etc/timezone
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - update timezone
+
+- name: Remove existing localtime configuration file
+  file: path=/etc/localtime state=absent
+
+- name: Set localtime
+  file: src=/usr/share/zoneinfo/{{ current_timezone | default("UTC") }} dest=/etc/localtime state=link owner=root group=root mode=0644

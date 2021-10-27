@@ -1,0 +1,13 @@
+---
+- name: Show clusters
+  shell: |
+    set -o pipefail
+    sacctmgr -np list cluster {{ slurm_cluster_name }} | wc -l
+  args:
+    executable: /bin/bash
+  register: cluster_result
+  changed_when: false
+
+- name: Add cluster
+  command: "sacctmgr -i add cluster {{ slurm_cluster_name }}"
+  when: cluster_result.stdout == 0

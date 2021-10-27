@@ -1,0 +1,61 @@
+---
+- name: Install slurm package
+  apt:
+    name: slurm-wlm
+    state: present
+    update_cache: yes
+
+- name: Install related pkgs
+  apt:
+    name: ['slurm-wlm-basic-plugins', 'slurm-wlm-doc']
+    state: present
+  when: "'controller' in slurm_roles"
+
+- name: Create directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: slurm
+    group: slurm
+    mode: 0755
+  with_items:
+    - "{{ make_dirs | default([]) }}"
+  when: item |length>0
+
+# slurmdbd
+- name: Install slurmdbd
+  include_tasks: slurmdbd.yml
+  when: "'dbd' in slurm_roles"
+
+- name: Configure slurm.conf
+  template:
+    src: "slurm.conf.j2"
+    dest: /etc/slurm-llnl/slurm.conf
+    owner: slurm
+    group: slurm
+    mode: 0644
+  notify:
+    - Restart slurmd
+    - Restart slurmctld
+
+- name: Enable slurmctld service
+  service:
+    name: slurmctld
+    enabled: yes
+    state: started
+  when: "'controller' in slurm_roles"
+
+- name: Enable slurmd service
+  service:
+    name: slurmd
+    enabled: yes
+    state: started
+  when: "'exec' in slurm_roles"
+
+- name: Immediately restart service
+  meta: flush_handlers
+
+# cluster add
+- name: Add cluster to accounting
+  include_tasks: clusteradd.yml
+  when: "'dbd' in slurm_roles"

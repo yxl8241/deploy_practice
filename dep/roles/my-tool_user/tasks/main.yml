@@ -1,0 +1,42 @@
+---
+- name: Varify required variables
+  assert:
+    that:
+      - add_user |length > 0
+    fail_msg: "missing add_user"
+    success_msg: "add new user '{{ add_user }}'"
+
+- name: debug py_version
+  debug:
+    msg: "python version : {{ py_version }}"
+
+- name: Create a user
+  user:
+    name: "{{ add_user }}"
+    state: present
+    shell: /bin/bash
+    create_home: yes
+  when: add_user |length > 0
+
+- name: Check home dir
+  stat:
+    path: "/home/{{ add_user }}"
+  register: home_dir
+
+- name: Creates directory for easybuild
+  file:
+    path: "{{ home_dir.stat.path }}{{ eb_install_dir }}"
+    state: directory
+    owner: "{{ add_user }}"
+    group: "{{ add_user }}"
+    mode: 0775
+  when: home_dir.stat.exists and eb_install_dir |length > 0
+
+- name: Create bach_profile
+  template:
+    src: bash_profile.j2
+    dest: "{{ home_dir.stat.path }}/.bash_profile"
+    owner: "{{ add_user }}"
+    group: "{{ add_user }}"
+    mode: 0644
+  when: profile_enabled and home_dir.stat.exists

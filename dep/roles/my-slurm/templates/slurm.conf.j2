@@ -1,0 +1,75 @@
+{% if slurm_major_version|int > 17 %}
+SlurmctldHost={{ controller_host }}
+#SlurmctldHost={{ backup_host }}
+{% else %}
+ControlMachine={{ controller_host }}
+#BackupController={{ backup_host }}
+{% endif %}
+
+MpiDefault=none
+ProctrackType=proctrack/pgid
+ReturnToService=1
+
+SlurmctldPidFile={{ slurm_pid_dir }}/slurmctld.pid
+SlurmctldPort=6817
+SlurmdPidFile={{ slurm_pid_dir }}/slurmd.pid
+SlurmdPort=6818
+
+SlurmdSpoolDir={{ slurm_spool_dir }}
+SlurmUser=slurm
+StateSaveLocation={{ state_save_loc }}
+SwitchType=switch/none
+TaskPlugin=task/none
+
+# TIMERS
+InactiveLimit=0
+KillWait=30
+MinJobAge=300
+SlurmctldTimeout=120
+SlurmdTimeout=300
+Waittime=0
+
+# SCHEDULING
+SchedulerType=sched/backfill
+
+# RESOURCE
+{% if slurm_major_version|int > 17 %}
+SelectType=select/cons_res
+SelectTypeParameters=CR_Core
+{% else %}
+SelectType=select/linear
+{% endif %}
+
+# LOGGING AND ACCOUNTING
+AccountingStorageEnforce=associations,limits
+AccountingStorageHost={{ controller_host }}
+AccountingStorageLoc={{ slumdbd_database }}
+AccountingStorageType=accounting_storage/slurmdbd
+AccountingStorageUser={{ slumdb_user }}
+AccountingStoreJobComment=YES
+ClusterName={{ slurm_cluster_name }}
+
+JobCompType=jobcomp/none
+JobAcctGatherFrequency=30
+JobAcctGatherType=jobacct_gather/linux
+SlurmctldDebug=info
+SlurmctldLogFile={{ slurm_log_dir }}/slurmctld.log
+SlurmdDebug=info
+SlurmdLogFile={{ slurm_log_dir }}/slurmd.log
+
+# COMPUTE NODES
+# Nodes
+{% for i in slurm_nodes %}
+NodeName={{ i.name }}{% for k in i | sort if k != 'name' %} {{ k }}={{ 'YES' if i[k] is sameas true else ('NO' if i[k] is sameas false else i[k]) }}{% endfor %}
+
+{% else %}
+NodeName=localhost State=UNKNOWN
+{% endfor %}
+
+# Partitions
+{% for i in slurm_partitions %}
+PartitionName={{ i.name }}{% for k in i | sort if k != 'name' %} {{ k }}={{ 'YES' if i[k] is sameas true else ('NO' if i[k] is sameas false else i[k]) }}{% endfor %}
+
+{% else %}
+PartitionName=debug Default=YES Nodes={{ (slurm_nodes[0] | default({})).name | default('localhost') }} State=UP
+{% endfor %}

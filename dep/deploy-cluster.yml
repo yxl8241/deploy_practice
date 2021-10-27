@@ -1,0 +1,11 @@
+---
+- hosts: all
+  become: true
+  roles:
+    - my-common-pkgs
+    - digital-ocean-timezone
+    - ansible-role-chrony-master
+    - my-munge
+    - my-slurm
+    - my-tool_user
+    - idiv-biodiversity.lmod

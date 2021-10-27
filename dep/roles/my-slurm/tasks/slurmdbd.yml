@@ -1,0 +1,22 @@
+---
+- name: Install slurmdbd package
+  apt:
+    name: slurmdbd
+    state: present
+    update_cache: yes
+
+- name: Configure slurmdbd.conf
+  template:
+    src: slurmdbd.conf.j2
+    dest: /etc/slurm-llnl/slurmdbd.conf
+    owner: slurm
+    group: slurm
+    mode: 0600
+  notify:
+    - Restart slurmdbd
+
+- name: Enable slurmdbd service
+  service:
+    name: slurmdbd
+    enabled: yes
+    state: started

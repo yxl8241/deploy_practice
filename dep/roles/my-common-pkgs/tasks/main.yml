@@ -1,0 +1,20 @@
+---
+- name: Install common packages
+  apt:
+    name: ['unzip', 'gzip', 'bzip2', 'logrotate', 'build-essential', 'libibverbs-dev', 'rdma-core']
+    state: present
+    update_cache: yes
+
+- name: Install packages for devops
+  apt:
+    name: ['zsh', 'csh', 'wget', 'sed', 'libssl-dev', 'python3-pip', 'python3-dev', 'git', 'virtualenv']
+    state: present
+    update_cache: yes
+  when: develop_enabled
+
+- name: Install editors
+  apt:
+    name: ['vim', 'emacs', 'nano', 'evince']
+    state: present
+    update_cache: yes
+  when: editor_enabled

@@ -1,0 +1,23 @@
+---
+# packages
+develop_enabled: true
+editor_enabled: true
+
+# ntp/chrony
+chrony_config_server:
+  - time.stdtime.gov.tw
+  - tock.stdtime.gov.tw
+  - watch.stdtime.gov.tw
+  - time.google.com
+  - time.asia.apple.com
+
+chrony_config_extra_options:
+  allow: '10.0.0.0/24'
+
+# Slurm task
+slurm_roles: ['controller', 'dbd']
+
+# Lmod
+lmod_install: yes
+lmod_spider_cache_cron: yes
+lmod_spider_cache_cron_minute: '30'

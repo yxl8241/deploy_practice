@@ -1,0 +1,18 @@
+---
+- hosts: all
+  become: false
+  tasks:
+    - name: Print facts
+      debug:
+        msg:
+        - "'NodeName': {{ ansible_nodename }}"
+        - "'CPUs': {{ ansible_processor_vcpus }}"
+        - "'RealMemory': {{ ansible_memtotal_mb }}"
+        - "'Sockets': {{ ansible_processor_count }}"
+        - "'CoresPerSocket': {{ ansible_processor_cores }}"
+        - "'ThreadsPerCore': {{ ansible_processor_threads_per_core }}"
+        - "'MaxCPUsPerNode': {{ ansible_processor_vcpus }}"
+
+#    - name: Print all
+#      debug:
+#        var: ansible_facts

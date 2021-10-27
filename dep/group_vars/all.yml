@@ -1,0 +1,37 @@
+---
+# Timezone
+current_timezone: Asia/Taipei
+
+# Slurm configure
+controller_host: "{{ groups['master'][0] }}"
+slurm_cluster_name: ipmb1
+
+slumdbd_database: slurm_acct_db
+slumdb_user: slurm
+slumdb_password: slurm123
+
+node_socket: 1
+node_core: 1
+node_thread: 2
+node_cpu: "{{ hostvars[groups['worker'][0]]['ansible_processor_vcpus'] }}"
+node_memory: "{{ hostvars[groups['worker'][0]]['ansible_memtotal_mb'] }}"
+
+# Specify slurm entities
+slurm_nodes: [
+  {'name': 'vmnode[3-4]', 'CPUs': "{{ node_cpu }}", 'RealMemory': "{{ node_memory }}", 'Sockets': "{{ node_socket }}", 'CoresPerSocket': "{{ node_core }}", 'ThreadsPerCore': "{{ node_thread }}", 'State': UNKNOWN}
+]
+slurm_partitions: [
+  {'name': short, 'Nodes': vmnode3, 'Default': YES, 'MaxTime': INFINITE, 'MaxCPUsPerNode': "{{ node_cpu }}", 'State': UP},
+  {'name': standard, 'Nodes': vmnode4, 'MaxTime': INFINITE, 'MaxCPUsPerNode': "{{ node_cpu }}", 'State': UP}
+]
+
+# A user to hold Lmod
+add_user: repo
+profile_enabled: true
+
+# Path for softwares
+eb_install_dir: "/tools"
+
+# Lmod
+lmod_version: "8.5.14"
+lmod_prefix: "/home/{{ add_user }}"
