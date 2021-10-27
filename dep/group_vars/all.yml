@@ -26,7 +26,7 @@ slurm_partitions: [
 ]
 
 # A user to hold Lmod
-add_user: repo
+add_user: toolrepo
 profile_enabled: true
 
 # Path for softwares
